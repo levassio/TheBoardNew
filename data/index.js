@@ -8,13 +8,7 @@
             if (err) {
                 next(err, null);
             } else {
-                db.notes.find().sort({name: 1}).toArray(function (err, results) {
-                    if (err) {
-                        next(err, null);
-                    } else {
-                        next(null, results);
-                    }
-                });
+                db.notes.find().sort({name: 1}).toArray(next);
             }
         });
     };
@@ -45,11 +39,9 @@
                 next(err);
             } else {
                 db.notes.find({name: categoryName}).count(function (err, count) {
-
                     if (err) {
                         next(err);
                     } else {
-
                         if (count != 0) {
                             next("Category already exists");
                         } else {
@@ -57,13 +49,8 @@
                                 name: categoryName,
                                 notes: []
                             };
-                            db.notes.insert(cat, function (err) {
-                                if (err) {
-                                    next(err);
-                                } else {
-                                    next(null);
-                                }
-                            });
+
+                            db.notes.insert(cat, next);
                         }
                     }
                 });
@@ -94,9 +81,8 @@
     function seedDatabase() {
         database.getDb(function (err, db) {
             if (err) {
-                console.log("Failed to seed database: " + err);
+                console.log("Failed to retrieve database: " + err);
             } else {
-                // test to see if data exists
                 db.notes.count(function (err, count) {
                     if (err) {
                         console.log("Failed to retrieve database count");
